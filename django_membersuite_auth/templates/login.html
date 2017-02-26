@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div id="login">
+    <h1 class="page-title">Django/MemberSuite Login</h1>
+    <div class="block-content content">
+      <p>
+        If you already have a MemberSuite account, please sign-in below.
+        If you don't have an MemberSuite account,
+        <a href="/user/register">click here to create one</a>.
+      </p>
+    </div>
+    <form enctype='multipart/form-data' action="" method="post">
+      {% csrf_token %}
+      {{ form }}
+      <input class="btn btn-success" type="submit" value="Log In" />
+    </form>
+  </div>
+{% endblock %}

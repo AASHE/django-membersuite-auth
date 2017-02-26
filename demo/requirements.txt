@@ -1,0 +1,1 @@
+-e git+https://github.com/AASHE/django-membersuite-auth.git#egg=django-membersuite-auth-dev.egg
