@@ -32,8 +32,4 @@ setup(name="django-membersuite-auth",
       ],
       include_package_data=True,
       install_requires=["django",
-                        "future",
-                        "python-membersuite-api-client"],
-      dependency_links=["https://github.com/AASHE/"
-                        "python-membersuite-api-client.git#"
-                        "egg=python-membersuite-api-client.egg"])
+                        "future"])
