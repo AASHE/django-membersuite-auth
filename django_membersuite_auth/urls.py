@@ -15,8 +15,10 @@ def get_patterns():
     it's completely gone.
 
     When no `patterns` can be imported (i.e., when Django version >=
-    1.10) one is defined.  It just creates a list of its arguments.  A
-    list is all >= v1.10 wants.
+    1.10) one is defined.  It just creates a list of all but its first
+    argument.  A list is all >= v1.10 wants.  The first argument is
+    specified here, even though it's not needed, to preserve the same
+    signature of the patterns functions provide by Django.
 
     """
     try:
@@ -25,18 +27,18 @@ def get_patterns():
         try:
             from django.conf.urls import patterns
         except ImportError:  # Django >= 1.10
-            def patterns(*urls):
+            def patterns(prefix=None, *urls):
                 return list(urls)
     return patterns
 
 
-urlpatterns = get_patterns()(
+urlpatterns = get_patterns()('',
 
-    url(r"^login/$",
-        login, {"template_name": "login.html",
-                "authentication_form": LoginForm},
-        name="django_membersuite_auth_login"),
+                             url(r"^login/$",
+                                 login, {"template_name": "login.html",
+                                         "authentication_form": LoginForm},
+                                 name="django_membersuite_auth_login"),
 
-    url(r"^logout/$",
-        logout_then_login,
-        name="django_membersuite_auth_logout"))
+                             url(r"^logout/$",
+                                 logout_then_login,
+                                 name="django_membersuite_auth_logout"))
