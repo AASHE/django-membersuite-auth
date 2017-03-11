@@ -17,8 +17,8 @@ class MemberSuiteBackend(object):
         self.user_service = MemberSuitePortalUserService(client=self.client)
 
     def authenticate(self, username=None, password=None):
-        """Returns the appropriate MemberSuitePortalUser.user if successful;
-        otherwise returns None.
+        """Returns the appropriate django.contrib.auth.models.User if
+        successful; otherwise returns None.
 
         If login succeeds and there's no MemberSuitePortalUser that
         matches on membersuite_id;
@@ -41,7 +41,7 @@ class MemberSuiteBackend(object):
 
         """
         try:
-            membersuite_portal_user = self.user_service.login(
+            authenticated_portal_user = self.user_service.login(
                 username=username,
                 password=password)
         except LoginToPortalError:
@@ -49,46 +49,45 @@ class MemberSuiteBackend(object):
 
         try:
             membersuite_portal_user = MemberSuitePortalUser.objects.get(
-                membersuite_id=membersuite_portal_user.id)
+                membersuite_id=authenticated_portal_user.membersuite_id)
 
         except MemberSuitePortalUser.DoesNotExist:
             if getattr(settings, "MAINTENANCE_MODE", False):
                 return None
 
-            user_username = membersuite_portal_user.get_username()
+            user_username = authenticated_portal_user.get_username()
             user, user_created = User.objects.get_or_create(
                 username=user_username,
-                defaults={"email": membersuite_portal_user.email_address,
-                          "first_name": membersuite_portal_user.first_name,
-                          "last_name": membersuite_portal_user.last_name})
+                defaults={"email": authenticated_portal_user.email_address,
+                          "first_name": authenticated_portal_user.first_name,
+                          "last_name": authenticated_portal_user.last_name})
 
             is_member = self.is_member(
-                membersuite_portal_user=membersuite_portal_user)
+                membersuite_portal_user=authenticated_portal_user)
 
             membersuite_portal_user = MemberSuitePortalUser.objects.create(
                 user=user,
-                membersuite_id=membersuite_portal_user.id,
-                membersuite_session_key=membersuite_portal_user.session_id,
+                membersuite_id=authenticated_portal_user.membersuite_id,
+                membersuite_session_key=authenticated_portal_user.session_id,
                 is_member=is_member)
 
             if not user_created:
                 # Update User attributes in case they changed
                 # in MemberSuite.
-                user.email = membersuite_portal_user.email_address
-                user.first_name = membersuite_portal_user.first_name
-                user.last_name = membersuite_portal_user.last_name
+                user.email = authenticated_portal_user.email_address
+                user.first_name = authenticated_portal_user.first_name
+                user.last_name = authenticated_portal_user.last_name
 
             user.set_unusable_password()  # Do we really want to do this?
 
             user.save()
 
         else:
-            # Found an MemberSuitePortalUser. Update cached info.
+            # Found a MemberSuitePortalUser. Update cached info.
             membersuite_portal_user.membersuite_session_key = (
-                membersuite_portal_user.session_id)
-            is_member = self.is_member(
-                membersuite_portal_user=membersuite_portal_user)
-            membersuite_portal_user.is_member = is_member
+                authenticated_portal_user.session_id)
+            membersuite_portal_user.is_member = self.is_member(
+                membersuite_portal_user=authenticated_portal_user)
             membersuite_portal_user.save()
 
         if (getattr(settings, "MAINTENANCE_MODE", None) and

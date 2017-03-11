@@ -29,7 +29,7 @@ SOAP API.
 ### Installing django-membersuite-auth
 
 ```bash
-pip install -e git+https://github.com/AASHE/django-membersuite-auth.git#egg=django_membersuite_auth
+pip install -e git+https://github.com/AASHE/django-membersuite-auth.git#egg=django-membersuite-auth-dev
 ````
 
 Add to your installed apps:
