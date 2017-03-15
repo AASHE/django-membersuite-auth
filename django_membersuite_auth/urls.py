@@ -35,7 +35,7 @@ def get_patterns():
 urlpatterns = get_patterns()('',
 
                              url(r"^login/$",
-                                 login, {"template_name": "login.html",
+                                 login, {"template_name": "auth/login.html",
                                          "authentication_form": LoginForm},
                                  name="django_membersuite_auth_login"),
 

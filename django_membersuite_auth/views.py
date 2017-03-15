@@ -60,7 +60,7 @@ def logout_then_login(request, *args, **kwargs):
 
 
 class LoginView(FormView):
-    template_name = "login.html"
+    template_name = "auth/login.html"
     form_class = LoginForm
 
     def form_valid(self, form):
