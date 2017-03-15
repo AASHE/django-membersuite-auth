@@ -52,10 +52,11 @@ class MemberSuiteBackend(object):
                 membersuite_id=authenticated_portal_user.membersuite_id)
 
         except MemberSuitePortalUser.DoesNotExist:
+
             if getattr(settings, "MAINTENANCE_MODE", False):
                 return None
 
-            user_username = authenticated_portal_user.get_username()
+            user_username = authenticated_portal_user.generate_username()
             user, user_created = User.objects.get_or_create(
                 username=user_username,
                 defaults={"email": authenticated_portal_user.email_address,
