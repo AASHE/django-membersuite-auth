@@ -1,16 +1,8 @@
 # Django MemberSuite Authentication Module
 
-[![Build Status]
-    (https://travis-ci.org/AASHE/django-membersuite-auth.svg)]
-    (https://travis-ci.org/AASHE/django-membersuite-auth)
-
-[![Coverage Status]
-    (https://coveralls.io/repos/AASHE/django-membersuite-auth/badge.svg)]
-    (https://coveralls.io/github/AASHE/django-membersuite-auth)
-
-[![Code Climate]
-    (https://codeclimate.com/github/AASHE/django-membersuite-auth/badges/gpa.svg)]
-    (https://codeclimate.com/github/AASHE/django-membersuite-auth)
+[![Build Status](https://travis-ci.org/AASHE/django-membersuite-auth.svg)](https://travis-ci.org/AASHE/django-membersuite-auth)
+[![Coverage Status](https://coveralls.io/repos/AASHE/django-membersuite-auth/badge.svg)](https://coveralls.io/github/AASHE/django-membersuite-auth)
+[![Code Climate](https://codeclimate.com/github/AASHE/django-membersuite-auth/badges/gpa.svg)](https://codeclimate.com/github/AASHE/django-membersuite-auth)
 
 Version: 0.1
 
