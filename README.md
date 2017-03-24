@@ -45,11 +45,6 @@ Update your Authentication Backends:
     - `MS_SECRET_KEY`
     - `MS_ASSOCIATION_ID`
 
-- `DMA_COOKIE_SESSION`, a name for the MemberSuite auth cookie.
-
-- `DMA_COOKIE_DOMAIN`, a domain, e.g., ".aashe.org", for the cookie.
-
-
 ## Login View Usage
 
 Update your URL configuration file:

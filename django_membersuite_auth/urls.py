@@ -4,7 +4,7 @@ except ImportError:  # Django >= 1.6
     from django.conf.urls import url
 
 from .forms import LoginForm
-from .views import login, logout_then_login
+from django.contrib.auth.views import login, logout_then_login
 
 
 def get_patterns():

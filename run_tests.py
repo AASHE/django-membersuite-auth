@@ -83,10 +83,6 @@ def main():
     global_settings.MS_SECRET_KEY = os.environ["MS_SECRET_KEY"]
     global_settings.MS_ASSOCIATION_ID = os.environ["MS_ASSOCIATION_ID"]
 
-    global_settings.DMA_COOKIE_SESSION = (
-        "SESS119812a4f54200aec862c73cf2ee")
-    global_settings.DMA_COOKIE_DOMAIN = ".aashe.org"
-
     global_settings.TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',

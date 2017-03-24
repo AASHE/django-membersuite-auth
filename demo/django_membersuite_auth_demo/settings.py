@@ -29,9 +29,6 @@ LOGIN_URL = "/login/"
 LOGOUT_URL = "/logout/"
 LOGIN_REDIRECT_URL = "/"
 
-DMA_COOKIE_SESSION = "SESS119812a4f54200aec862c73cf2ee"
-DMA_COOKIE_DOMAIN = ".aashe.org"
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 

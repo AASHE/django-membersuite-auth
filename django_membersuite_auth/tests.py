@@ -3,21 +3,17 @@ import unittest
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.sessions.middleware import SessionMiddleware
-from django.contrib.messages.middleware import MessageMiddleware
-from django.http import HttpRequest
 from django.test import (Client,
                          RequestFactory,
                          TestCase,
                          override_settings)
-from django.urls import reverse
 from membersuite_api_client.client import ConciergeClient
 from membersuite_api_client.security.services import LoginToPortalError
 
 from .backends import MemberSuiteBackend
 from .models import MemberSuitePortalUser
 from .services import MemberSuitePortalUserService
-from .views import LoginView, logout
+from .views import LoginView
 
 TEST_MS_PORTAL_USER_ID = os.environ["TEST_MS_PORTAL_USER_ID"]
 TEST_MS_PORTAL_USER_PASS = os.environ["TEST_MS_PORTAL_USER_PASS"]
@@ -101,23 +97,6 @@ class MemberSuiteBackendTestCase(TestCase):
             password=TEST_MS_PORTAL_USER_PASS)
         membersuite_portal_user = MemberSuitePortalUser.objects.get(user=user)
         self.assertNotEqual("", membersuite_portal_user.membersuite_id)
-        self.assertNotEqual("",
-                            membersuite_portal_user.membersuite_session_key)
-
-    def test_authenticate_sets_membersuite_session_key(self):
-        """Does authenticate() set MemberSuitePortalUser.membersuite_session_key?
-
-        """
-        # Authenticate once to get a user/membersuite_portal_user pair.
-        user = self.backend.authenticate(username=TEST_MS_PORTAL_USER_ID,
-                                         password=TEST_MS_PORTAL_USER_PASS)
-        user.membersuiteportaluser.membersuite_session_key = ""
-        user.membersuiteportaluser.save()
-        # Now authenticate again to reset membersuite_session_key.
-        user = self.backend.authenticate(username=TEST_MS_PORTAL_USER_ID,
-                                         password=TEST_MS_PORTAL_USER_PASS)
-        self.assertNotEqual("",
-                            user.membersuiteportaluser.membersuite_session_key)
 
     @override_settings(MAINTENANCE_MODE=True)
     def test_authenticate_blocks_nonstaff_in_maintenance_mode(self):
@@ -172,46 +151,8 @@ class ViewsTestCase(TestCase):
     def setUp(self):
         self.request_factory = RequestFactory()
 
-    def test_login_get(self):
-        response = self.client.get(reverse("django_membersuite_auth_login"))
-        self.assertEqual(200, response.status_code)
-
-    def test_logout_then_login(self):
-        response = self.client.get(reverse("django_membersuite_auth_logout"))
-        self.assertEqual(302, response.status_code)
-
     def test_login_view_get(self):
         request = self.get_middleworn_request()
         request.method = "GET"
         response = LoginView.as_view()(request)
         self.assertEqual(200, response.status_code)
-
-    def test_logout_with_membersuiteportaluser(self):
-        """Does logout work when a MemberSuitePortalUser is attached to
-        request.user?
-
-        """
-        request = self.get_middleworn_request()
-        request.method = "GET"
-        request.user = User.objects.create(username="testorato")
-        request.user.membersuiteportaluser = (
-            MemberSuitePortalUser.objects.create(user=request.user))
-        response = logout(request)
-        self.assertEqual(200, response.status_code)
-
-    def test_logout_without_membersuiteportaluser(self):
-        """Does logout work without a MemberSuitePortalUser attached to
-        request.user?
-
-        """
-        request = self.get_middleworn_request()
-        request.method = "GET"
-        request.user = User.objects.create(username="testorato")
-        request.user.membersuiteportaluser = None
-        response = logout(request)
-        self.assertEqual(200, response.status_code)
-
-    def get_middleworn_request(self):
-        request = HttpRequest()
-        SessionMiddleware().process_request(request)
-        return request

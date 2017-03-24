@@ -27,9 +27,6 @@ class MemberSuiteBackend(object):
 
             2) a User object might be created too.
 
-        Plus, the membersuite_session_key attribute of the appropriate
-        MemberSuitePortalUser is set when login succeeds.
-
         Plus, the is_member attribute on MemberSuitePortalUser is set
         when login succeeds.
 
@@ -69,7 +66,6 @@ class MemberSuiteBackend(object):
             membersuite_portal_user = MemberSuitePortalUser.objects.create(
                 user=user,
                 membersuite_id=authenticated_portal_user.membersuite_id,
-                membersuite_session_key=authenticated_portal_user.session_id,
                 is_member=is_member)
 
             if not user_created:
@@ -85,8 +81,6 @@ class MemberSuiteBackend(object):
 
         else:
             # Found a MemberSuitePortalUser. Update cached info.
-            membersuite_portal_user.membersuite_session_key = (
-                authenticated_portal_user.session_id)
             membersuite_portal_user.is_member = self.is_member(
                 membersuite_portal_user=authenticated_portal_user)
             membersuite_portal_user.save()
