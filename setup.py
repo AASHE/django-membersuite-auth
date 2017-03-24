@@ -9,7 +9,7 @@ def read(fname):
 
 
 setup(name="django-membersuite-auth",
-      version="0.1",
+      version="0.1.1",
       description="Django Authentication By MemberSuite",
       author=("Association for the Advancement of Sustainability in "
               "Higher Education"),
