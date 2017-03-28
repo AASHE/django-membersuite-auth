@@ -2,4 +2,3 @@ include LICENSE
 include README.md
 include setup.py
 recursive-include django_membersuite_auth *
-recursive-include django_membersuite_auth/templates *

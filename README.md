@@ -21,7 +21,7 @@ SOAP API.
 ### Installing django-membersuite-auth
 
 ```bash
-pip install -e git+https://github.com/AASHE/django-membersuite-auth.git#egg=django-membersuite-auth-dev
+pip install https://github.com/AASHE/django-membersuite-auth/archive/master.zip
 ````
 
 Add to your installed apps:
@@ -44,28 +44,3 @@ Update your Authentication Backends:
     - `MS_ACCESS_KEY`
     - `MS_SECRET_KEY`
     - `MS_ASSOCIATION_ID`
-
-## Login View Usage
-
-Update your URL configuration file:
-
-     from django_membersuite_auth.views import LoginView, logout
-
-     urlpatterns = [
-         ...
-         url(r'^login/', LoginView.as_view(), name='login'),
-         url(r'^logout/', logout, name='logout'),
-         ...
-     ]
-
-Include a Login link in your template. Construct the <a> tag such that
-it includes a "?next=" parameter like so:
-
-     <a href="{% url "login" %}?next={{ request.path }}">
-
-This will cause your session to redirect back to the page where the
-user clicked the Login link after a successful login.
-
-The same is true for logging out:
-
-    <a href="{% url "logout" %}?next={{ request.path }}">

@@ -13,7 +13,7 @@ from membersuite_api_client.security.services import LoginToPortalError
 from .backends import MemberSuiteBackend
 from .models import MemberSuitePortalUser
 from .services import MemberSuitePortalUserService
-from .views import LoginView
+
 
 TEST_MS_PORTAL_USER_ID = os.environ["TEST_MS_PORTAL_USER_ID"]
 TEST_MS_PORTAL_USER_PASS = os.environ["TEST_MS_PORTAL_USER_PASS"]
@@ -140,19 +140,3 @@ class MemberSuiteBackendTestCase(TestCase):
 
         """
         self.assertIsNone(self.backend.get_user(user_id=-1))
-
-
-class ViewsTestCase(TestCase):
-    """Tests of functions in views.py
-
-    """
-    client = Client()
-
-    def setUp(self):
-        self.request_factory = RequestFactory()
-
-    def test_login_view_get(self):
-        request = self.get_middleworn_request()
-        request.method = "GET"
-        response = LoginView.as_view()(request)
-        self.assertEqual(200, response.status_code)

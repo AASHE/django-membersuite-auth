@@ -9,7 +9,7 @@ def read(fname):
 
 
 setup(name="django-membersuite-auth",
-      version="1.1.1",
+      version="1.2",
       description="Django Authentication By MemberSuite",
       author=("Association for the Advancement of Sustainability in "
               "Higher Education"),
@@ -18,8 +18,7 @@ setup(name="django-membersuite-auth",
       long_description=read("README.md"),
       packages=[
           "django_membersuite_auth",
-          "django_membersuite_auth.migrations",
-          "django_membersuite_auth.templates"
+          "django_membersuite_auth.migrations"
       ],
       classifiers=[
           "Environment :: Web Environment",

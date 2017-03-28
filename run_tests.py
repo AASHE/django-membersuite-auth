@@ -16,8 +16,6 @@ def main():
     os.environ["DJANGO_SETTINGS_MODULE"] = "django.conf.global_settings"
     from django.conf import global_settings
 
-    global_settings.ROOT_URLCONF = "django_membersuite_auth.urls"
-
     global_settings.USE_TZ = True
 
     global_settings.STATIC_URL = os.environ.get('STATIC_URL', '/static/')
@@ -52,28 +50,15 @@ def main():
         global_settings.DATABASE_ENGINE = "sqlite3"
         global_settings.DATABASE_NAME = ":memory:"
 
-    if django.VERSION < (1, 9):
-        global_settings.MIDDLEWARE_CLASSES = [
-            'django.middleware.security.SecurityMiddleware',
-            'django.contrib.sessions.middleware.SessionMiddleware',
-            'django.middleware.common.CommonMiddleware',
-            'django.middleware.csrf.CsrfViewMiddleware',
-            'django.contrib.auth.middleware.AuthenticationMiddleware',
-            'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-            'django.contrib.messages.middleware.MessageMiddleware',
-            'django.middleware.clickjacking.XFrameOptionsMiddleware',
-        ]
-    else:
-        global_settings.MIDDLEWARE = [
-            'django.middleware.security.SecurityMiddleware',
-            'django.contrib.sessions.middleware.SessionMiddleware',
-            'django.middleware.common.CommonMiddleware',
-            'django.middleware.csrf.CsrfViewMiddleware',
-            'django.contrib.auth.middleware.AuthenticationMiddleware',
-            'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-            'django.contrib.messages.middleware.MessageMiddleware',
-            'django.middleware.clickjacking.XFrameOptionsMiddleware',
-        ]
+    global_settings.MIDDLEWARE = [
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware']
 
     global_settings.SECRET_KEY = "blahblah"
 
@@ -82,22 +67,6 @@ def main():
     global_settings.MS_ACCESS_KEY = os.environ["MS_ACCESS_KEY"]
     global_settings.MS_SECRET_KEY = os.environ["MS_SECRET_KEY"]
     global_settings.MS_ASSOCIATION_ID = os.environ["MS_ASSOCIATION_ID"]
-
-    global_settings.TEMPLATES = [
-        {
-            'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': [BASE_PATH + 'django_membersuite_auth/templates'],
-            'APP_DIRS': True,
-            'OPTIONS': {
-                'context_processors': [
-                    'django.template.context_processors.debug',
-                    'django.template.context_processors.request',
-                    'django.contrib.auth.context_processors.auth',
-                    'django.contrib.messages.context_processors.messages',
-                ],
-            },
-        },
-    ]
 
     from django.test.utils import get_runner
     test_runner = get_runner(global_settings)
