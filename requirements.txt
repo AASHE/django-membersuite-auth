@@ -4,17 +4,20 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
+# THEN the version specifier for django, below, is edited by hand
+# because pip-compile puts "django==1.11".
+#
 appdirs==1.4.3            # via zeep
 cached-property==1.3.0    # via zeep
 defusedxml==0.5.0         # via zeep
-django==1.10.6
+django>=1.4.3
 future==0.16.0
 isodate==0.5.4            # via zeep
 lxml==3.7.3               # via zeep
-membersuite-api-client==0.1.9
-pytz==2016.10             # via zeep
+membersuite-api-client==0.1.11
+pytz==2017.2              # via django, zeep
 requests-toolbelt==0.7.1  # via zeep
 requests==2.13.0          # via requests-toolbelt, zeep
 retrying==1.3.3           # via membersuite-api-client
 six==1.10.0               # via retrying, zeep
-zeep==1.1.0               # via membersuite-api-client
+zeep==1.4.1               # via membersuite-api-client

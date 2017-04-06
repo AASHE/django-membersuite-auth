@@ -7,6 +7,36 @@ from .models import MemberSuitePortalUser
 from .services import MemberSuitePortalUserService
 
 
+def get_user_for_portal_user(portal_user):
+    user = None
+    user_created = False
+
+    # First, try to match on username.
+    user_username = portal_user.generate_username()
+    try:
+        user = User.objects.get(username=user_username)
+    except User.DoesNotExist:
+        pass
+
+    # Next, try to match on email address.
+    if not user:
+        try:
+            user = User.objects.filter(email=portal_user.email_address)[0]
+        except IndexError:
+            pass
+
+    # No match? Create one.
+    if not user:
+        user = User.objects.create(
+            username=user_username,
+            email=portal_user.email_address,
+            first_name=portal_user.first_name,
+            last_name=portal_user.last_name)
+        user_created = True
+
+    return user, user_created
+
+
 class MemberSuiteBackend(object):
 
     def __init__(self, client=None, user_service=None, *args, **kwargs):
@@ -53,12 +83,8 @@ class MemberSuiteBackend(object):
             if getattr(settings, "MAINTENANCE_MODE", False):
                 return None
 
-            user_username = authenticated_portal_user.generate_username()
-            user, user_created = User.objects.get_or_create(
-                username=user_username,
-                defaults={"email": authenticated_portal_user.email_address,
-                          "first_name": authenticated_portal_user.first_name,
-                          "last_name": authenticated_portal_user.last_name})
+            user, user_created = get_user_for_portal_user(
+                portal_user=authenticated_portal_user)
 
             is_member = self.is_member(
                 membersuite_portal_user=authenticated_portal_user)

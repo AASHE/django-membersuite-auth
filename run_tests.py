@@ -68,10 +68,15 @@ def main():
     global_settings.MS_SECRET_KEY = os.environ["MS_SECRET_KEY"]
     global_settings.MS_ASSOCIATION_ID = os.environ["MS_ASSOCIATION_ID"]
 
+    global_settings.AUTH_USER_MODEL = "auth.User"
+
     from django.test.utils import get_runner
     test_runner = get_runner(global_settings)
 
-    django.setup()
+    try:
+        django.setup()
+    except AttributeError:
+        pass
 
     test_runner = test_runner()
     test_labels = (sys.argv[1:] if len(sys.argv) > 1

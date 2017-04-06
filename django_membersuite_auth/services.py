@@ -14,8 +14,8 @@ class MemberSuitePortalUserService(object):
     def login(self, username, password):
         """Logs `username` into the MemberSuite Portal.
 
-        Returns a .models.PortalUser object if successful, raises
-        services.LoginToPortalError if not.
+        Returns a .models.MemberSuitePortalUser object if successful,
+        raises services.LoginToPortalError if not.
 
         """
         try:

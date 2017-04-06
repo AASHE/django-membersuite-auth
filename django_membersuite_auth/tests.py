@@ -3,10 +3,7 @@ import unittest
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.test import (Client,
-                         RequestFactory,
-                         TestCase,
-                         override_settings)
+from django.test import TestCase
 from membersuite_api_client.client import ConciergeClient
 from membersuite_api_client.security.services import LoginToPortalError
 
@@ -95,17 +92,17 @@ class MemberSuiteBackendTestCase(TestCase):
         user = self.backend.authenticate(
             username=TEST_MS_PORTAL_USER_ID,
             password=TEST_MS_PORTAL_USER_PASS)
+        self.assertIsNotNone(user)
         membersuite_portal_user = MemberSuitePortalUser.objects.get(user=user)
         self.assertNotEqual("", membersuite_portal_user.membersuite_id)
 
-    @override_settings(MAINTENANCE_MODE=True)
     def test_authenticate_blocks_nonstaff_in_maintenance_mode(self):
         """Does authenticate block non-staff when in Maintenance Mode?
         """
-        self.assertIsNone(
-            self.backend.authenticate(
-                username=TEST_MS_PORTAL_USER_ID,
-                password=TEST_MS_PORTAL_USER_PASS))
+        setattr(settings, "MAINTENANCE_MODE", True)
+        self.assertIsNone(self.backend.authenticate(
+            username=TEST_MS_PORTAL_USER_ID,
+            password=TEST_MS_PORTAL_USER_PASS))
 
     def test_is_member_for_member(self):
         """Does is_member() correctly identify a member?
@@ -140,3 +137,18 @@ class MemberSuiteBackendTestCase(TestCase):
 
         """
         self.assertIsNone(self.backend.get_user(user_id=-1))
+
+    def test_get_user_for_portal_user_match_username(self):
+        """Does get_user_for_portal_user work if it finds a username match?
+        """
+        raise NoImplementedError
+
+    def test_get_user_for_portal_user_match_email(self):
+        """Does get_user_for_portal_user work if it finds an email match?
+        """
+        raise NoImplementedError
+
+    def test_get_user_for_portal_user_no_match(self):
+        """Does get_user_for_portal_user work if it finds no match?
+        """
+        raise NoImplementedError
