@@ -32,5 +32,5 @@ setup(name="django-membersuite-auth",
       include_package_data=True,
       install_requires=["django",
                         "future",
-                        "membersuite-api-client>=0.1.17"]
+                        "membersuite-api-client>=0.1.18"]
 )  # noqa what's visual indentation?
