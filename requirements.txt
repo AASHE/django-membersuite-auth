@@ -14,7 +14,7 @@ django>=1.4.3
 future==0.16.0
 isodate==0.5.4            # via zeep
 lxml==3.7.3               # via zeep
-membersuite-api-client==0.1.11
+membersuite-api-client==0.2
 pytz==2017.2              # via django, zeep
 requests-toolbelt==0.7.1  # via zeep
 requests==2.13.0          # via requests-toolbelt, zeep
