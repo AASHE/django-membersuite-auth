@@ -1,40 +1,12 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from membersuite_api_client.client import ConciergeClient
-from membersuite_api_client.security.services import LoginToPortalError
+from membersuite_api_client.security.services import (
+    LoginToPortalError,
+    get_user_for_membersuite_entity)
 
 from .models import MemberSuitePortalUser
 from .services import MemberSuitePortalUserService
-
-
-def get_user_for_portal_user(portal_user):
-    user = None
-    user_created = False
-
-    # First, try to match on username.
-    user_username = portal_user.generate_username()
-    try:
-        user = User.objects.get(username=user_username)
-    except User.DoesNotExist:
-        pass
-
-    # Next, try to match on email address.
-    if not user:
-        try:
-            user = User.objects.filter(email=portal_user.email_address)[0]
-        except IndexError:
-            pass
-
-    # No match? Create one.
-    if not user:
-        user = User.objects.create(
-            username=user_username,
-            email=portal_user.email_address,
-            first_name=portal_user.first_name,
-            last_name=portal_user.last_name)
-        user_created = True
-
-    return user, user_created
 
 
 class MemberSuiteBackend(object):
@@ -83,8 +55,8 @@ class MemberSuiteBackend(object):
             if getattr(settings, "MAINTENANCE_MODE", False):
                 return None
 
-            user, user_created = get_user_for_portal_user(
-                portal_user=authenticated_portal_user)
+            user, user_created = get_user_for_membersuite_entity(
+                membersuite_entity=authenticated_portal_user)
 
             is_member = self.is_member(
                 membersuite_portal_user=authenticated_portal_user)
