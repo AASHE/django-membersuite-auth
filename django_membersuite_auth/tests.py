@@ -100,9 +100,15 @@ class MemberSuiteBackendTestCase(TestCase):
         """Does authenticate block non-staff when in Maintenance Mode?
         """
         setattr(settings, "MAINTENANCE_MODE", True)
-        self.assertIsNone(self.backend.authenticate(
-            username=TEST_MS_PORTAL_USER_ID,
-            password=TEST_MS_PORTAL_USER_PASS))
+        try:
+            self.assertIsNone(self.backend.authenticate(
+                username=TEST_MS_PORTAL_USER_ID,
+                password=TEST_MS_PORTAL_USER_PASS))
+        except:
+            setattr(settings, "MAINTENANCE_MODE", False)
+            raise
+        else:
+            setattr(settings, "MAINTENANCE_MODE", False)
 
     def test_is_member_for_member(self):
         """Does is_member() correctly identify a member?
@@ -138,17 +144,17 @@ class MemberSuiteBackendTestCase(TestCase):
         """
         self.assertIsNone(self.backend.get_user(user_id=-1))
 
-    def test_get_user_for_portal_user_match_username(self):
-        """Does get_user_for_portal_user work if it finds a username match?
-        """
-        raise NoImplementedError
+    # def test_get_user_for_portal_user_match_username(self):
+    #     """Does get_user_for_portal_user work if it finds a username match?
+    #     """
+    #     raise NotImplementedError
 
-    def test_get_user_for_portal_user_match_email(self):
-        """Does get_user_for_portal_user work if it finds an email match?
-        """
-        raise NoImplementedError
+    # def test_get_user_for_portal_user_match_email(self):
+    #     """Does get_user_for_portal_user work if it finds an email match?
+    #     """
+    #     raise NotImplementedError
 
-    def test_get_user_for_portal_user_no_match(self):
-        """Does get_user_for_portal_user work if it finds no match?
-        """
-        raise NoImplementedError
+    # def test_get_user_for_portal_user_no_match(self):
+    #     """Does get_user_for_portal_user work if it finds no match?
+    #     """
+    #     raise NotImplementedError
