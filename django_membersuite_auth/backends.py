@@ -23,7 +23,7 @@ class MemberSuiteBackend(object):
         successful; otherwise returns None.
 
         If login succeeds and there's no MemberSuitePortalUser that
-        matches on membersuite_id;
+        matches on membersuite_id or user;
 
             1) one is created, and;
 
@@ -46,6 +46,7 @@ class MemberSuiteBackend(object):
         except LoginToPortalError:
             return None
 
+        # Match on membersuite ID?
         try:
             membersuite_portal_user = MemberSuitePortalUser.objects.get(
                 membersuite_id=authenticated_portal_user.membersuite_id)
@@ -58,24 +59,31 @@ class MemberSuiteBackend(object):
             user, user_created = get_user_for_membersuite_entity(
                 membersuite_entity=authenticated_portal_user)
 
-            is_member = self.is_member(
-                membersuite_portal_user=authenticated_portal_user)
+            # Match on user?
+            try:
+                membersuite_portal_user = MemberSuitePortalUser.objects.get(
+                    user=user)
 
-            membersuite_portal_user = MemberSuitePortalUser.objects.create(
-                user=user,
-                membersuite_id=authenticated_portal_user.membersuite_id,
-                is_member=is_member)
+            except MemberSuitePortalUser.DoesNotExist:
 
-            if not user_created:
-                # Update User attributes in case they changed
-                # in MemberSuite.
-                user.email = authenticated_portal_user.email_address
-                user.first_name = authenticated_portal_user.first_name
-                user.last_name = authenticated_portal_user.last_name
+                is_member = self.is_member(
+                    membersuite_portal_user=authenticated_portal_user)
 
-            user.set_unusable_password()  # Do we really want to do this?
+                membersuite_portal_user = MemberSuitePortalUser.objects.create(
+                    user=user,
+                    membersuite_id=authenticated_portal_user.membersuite_id,
+                    is_member=is_member)
 
-            user.save()
+                if not user_created:
+                    # Update User attributes in case they changed
+                    # in MemberSuite.
+                    user.email = authenticated_portal_user.email_address
+                    user.first_name = authenticated_portal_user.first_name
+                    user.last_name = authenticated_portal_user.last_name
+
+                user.set_unusable_password()  # Do we really want to do this?
+
+                user.save()
 
         else:
             # Found a MemberSuitePortalUser. Update cached info.
