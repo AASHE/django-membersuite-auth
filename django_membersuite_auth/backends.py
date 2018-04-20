@@ -11,13 +11,6 @@ from .services import MemberSuitePortalUserService
 
 class MemberSuiteBackend(object):
 
-    def __init__(self, client=None, user_service=None, *args, **kwargs):
-        self.client = client or ConciergeClient(
-            access_key=settings.MS_ACCESS_KEY,
-            secret_key=settings.MS_SECRET_KEY,
-            association_id=settings.MS_ASSOCIATION_ID)
-        self.user_service = MemberSuitePortalUserService(client=self.client)
-
     def authenticate(self, username=None, password=None):
         """Returns the appropriate django.contrib.auth.models.User if
         successful; otherwise returns None.
@@ -40,7 +33,9 @@ class MemberSuiteBackend(object):
 
         """
         try:
-            authenticated_portal_user = self.user_service.login(
+            self.connect()
+            user_service = self.get_user_service()
+            authenticated_portal_user = user_service.login(
                 username=username,
                 password=password)
         except LoginToPortalError:
@@ -66,7 +61,7 @@ class MemberSuiteBackend(object):
 
             except MemberSuitePortalUser.DoesNotExist:
 
-                is_member = self.is_member(
+                is_member = self.get_is_member(
                     membersuite_portal_user=authenticated_portal_user)
 
                 membersuite_portal_user = MemberSuitePortalUser.objects.create(
@@ -87,7 +82,7 @@ class MemberSuiteBackend(object):
 
         else:
             # Found a MemberSuitePortalUser. Update cached info.
-            membersuite_portal_user.is_member = self.is_member(
+            membersuite_portal_user.is_member = self.get_is_member(
                 membersuite_portal_user=authenticated_portal_user)
             membersuite_portal_user.save()
 
@@ -98,14 +93,25 @@ class MemberSuiteBackend(object):
 
         return membersuite_portal_user.user
 
+    def connect(self):
+        self.client = ConciergeClient(
+            access_key=settings.MS_ACCESS_KEY,
+            secret_key=settings.MS_SECRET_KEY,
+            association_id=settings.MS_ASSOCIATION_ID)
+
+    def get_user_service(self):
+        user_service = MemberSuitePortalUserService(client=self.client)
+        return user_service
+
     def get_user(self, user_id):
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
 
-    def is_member(self, membersuite_portal_user, client=None):
-        client = client or self.client
+    def get_is_member(self, membersuite_portal_user, client=None):
+
+        client = client if client else self.client
 
         individual = membersuite_portal_user.get_individual(client=client)
         is_member = individual.is_member(client=client)

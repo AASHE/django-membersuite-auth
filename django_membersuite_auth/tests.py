@@ -49,7 +49,7 @@ class MemberSuiteBackendTestCase(TestCase):
         cls.user_service = MemberSuitePortalUserService()
 
     def setUp(self):
-        self.backend = MemberSuiteBackend(user_service=self.user_service)
+        self.backend = MemberSuiteBackend()
 
     def test_authenticate_username_password_correct(self):
         user = self.backend.authenticate(username=TEST_MS_PORTAL_USER_ID,
@@ -89,6 +89,7 @@ class MemberSuiteBackendTestCase(TestCase):
 
         """
         self.assertEqual(0, MemberSuitePortalUser.objects.count())
+
         user = self.backend.authenticate(
             username=TEST_MS_PORTAL_USER_ID,
             password=TEST_MS_PORTAL_USER_PASS)
@@ -96,22 +97,8 @@ class MemberSuiteBackendTestCase(TestCase):
         membersuite_portal_user = MemberSuitePortalUser.objects.get(user=user)
         self.assertNotEqual("", membersuite_portal_user.membersuite_id)
 
-    def test_authenticate_blocks_nonstaff_in_maintenance_mode(self):
-        """Does authenticate block non-staff when in Maintenance Mode?
-        """
-        setattr(settings, "MAINTENANCE_MODE", True)
-        try:
-            self.assertIsNone(self.backend.authenticate(
-                username=TEST_MS_PORTAL_USER_ID,
-                password=TEST_MS_PORTAL_USER_PASS))
-        except:
-            setattr(settings, "MAINTENANCE_MODE", False)
-            raise
-        else:
-            setattr(settings, "MAINTENANCE_MODE", False)
-
-    def test_is_member_for_member(self):
-        """Does is_member() correctly identify a member?
+    def test_get_is_member_for_member(self):
+        """Does get_is_member() correctly identify a member?
 
         Assumptions:
           * test user is a member of a member Organization
@@ -120,13 +107,14 @@ class MemberSuiteBackendTestCase(TestCase):
         membersuite_portal_user = self.user_service.login(
             username=TEST_MS_PORTAL_USER_ID,
             password=TEST_MS_PORTAL_USER_PASS)
-        is_member = self.backend.is_member(
+        self.backend.connect()
+        is_member = self.backend.get_is_member(
             membersuite_portal_user=membersuite_portal_user)
         self.assertTrue(is_member)
 
     @unittest.skip("Requires fixture of Individual and non-member Org")
-    def test_is_member_for_nonmember(self):
-        """Does is_member() correctly identify a non-member?
+    def test_get_is_member_for_nonmember(self):
+        """Does get_is_member() correctly111 identify a non-member?
         """
         raise NotImplementedError
 
