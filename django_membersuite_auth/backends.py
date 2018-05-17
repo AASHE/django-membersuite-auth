@@ -41,10 +41,13 @@ class MemberSuiteBackend(object):
         except LoginToPortalError:
             return None
 
-        # Match on membersuite ID?
+        # Match on MembersuitePortalUser ID?
         try:
+            # Match on the last 27 characters of membersuite_id -- the
+            # first set of characters can vary.
+            end_of_id = authenticated_portal_user.membersuite_id[-27:]
             membersuite_portal_user = MemberSuitePortalUser.objects.get(
-                membersuite_id=authenticated_portal_user.membersuite_id)
+                membersuite_id__endswith=end_of_id)
 
         except MemberSuitePortalUser.DoesNotExist:
 
@@ -79,6 +82,11 @@ class MemberSuiteBackend(object):
                 user.set_unusable_password()  # Do we really want to do this?
 
                 user.save()
+
+            else:
+                membersuite_portal_user.membersuite_id = (
+                    authenticated_portal_user.membersuite_id)
+                membersuite_portal_user.save()
 
         else:
             # Found a MemberSuitePortalUser. Update cached info.
