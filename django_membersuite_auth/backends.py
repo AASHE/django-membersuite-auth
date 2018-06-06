@@ -41,13 +41,9 @@ class MemberSuiteBackend(object):
         except LoginToPortalError:
             return None
 
-        # Match on MembersuitePortalUser ID?
         try:
-            # Match on the last 27 characters of membersuite_id -- the
-            # first set of characters can vary.
-            end_of_id = authenticated_portal_user.membersuite_id[-27:]
             membersuite_portal_user = MemberSuitePortalUser.objects.get(
-                membersuite_id__endswith=end_of_id)
+                membersuite_id=authenticated_portal_user.membersuite_id)
 
         except MemberSuitePortalUser.DoesNotExist:
 
