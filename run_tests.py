@@ -34,21 +34,17 @@ def main():
         'django_membersuite_auth'
     )
 
-    if django.VERSION > (1, 2):
-        global_settings.DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': os.path.join(BASE_PATH,
-                                     'django-membersuite-auth.sqlite'),
-                'USER': '',
-                'PASSWORD': '',
-                'HOST': '',
-                'PORT': '',
-            }
+    global_settings.DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_PATH,
+                                 'django-membersuite-auth.sqlite'),
+            'USER': '',
+            'PASSWORD': '',
+            'HOST': '',
+            'PORT': '',
         }
-    else:
-        global_settings.DATABASE_ENGINE = "sqlite3"
-        global_settings.DATABASE_NAME = ":memory:"
+    }
 
     global_settings.MIDDLEWARE = [
         'django.middleware.security.SecurityMiddleware',
