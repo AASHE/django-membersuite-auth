@@ -9,7 +9,7 @@ def read(fname):
 
 
 setup(name="django-membersuite-auth",
-      version="1.6.3",
+      version="1.6.5",
       description="Django Authentication By MemberSuite",
       author=("Association for the Advancement of Sustainability in "
               "Higher Education"),
@@ -31,6 +31,6 @@ setup(name="django-membersuite-auth",
       ],
       include_package_data=True,
       install_requires=["future",
-                        "membersuite-api-client==0.4.4"
+                        "membersuite-api-client==0.4.6"
       ]
 )  # noqa what's visual indentation?
