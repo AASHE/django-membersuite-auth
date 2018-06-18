@@ -85,11 +85,10 @@ class MemberSuiteBackend(object):
 
                 user.save()
 
-        else:
-            # Found a MemberSuitePortalUser. Update cached info.
-            membersuite_portal_user.is_member = self.is_member(
-                membersuite_portal_user=authenticated_portal_user)
-            membersuite_portal_user.save()
+        # Update cached info (is_member).
+        membersuite_portal_user.is_member = self.is_member(
+            membersuite_portal_user=authenticated_portal_user)
+        membersuite_portal_user.save()
 
         if (getattr(settings, "MAINTENANCE_MODE", None) and
             not membersuite_portal_user.user.is_staff):  # noqa
