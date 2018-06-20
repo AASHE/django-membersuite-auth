@@ -64,13 +64,9 @@ class MemberSuiteBackend(object):
 
             except MemberSuitePortalUser.DoesNotExist:
 
-                is_member = self.get_is_member(
-                    membersuite_portal_user=authenticated_portal_user)
-
-                membersuite_portal_user = MemberSuitePortalUser.objects.create(
+                membersuite_portal_user = MemberSuitePortalUser(
                     user=user,
-                    membersuite_id=authenticated_portal_user.membersuite_id,
-                    is_member=is_member)
+                    membersuite_id=authenticated_portal_user.membersuite_id)
 
                 if not user_created:
                     # Update User attributes in case they changed
@@ -79,20 +75,19 @@ class MemberSuiteBackend(object):
                     user.first_name = authenticated_portal_user.first_name
                     user.last_name = authenticated_portal_user.last_name
 
-                user.set_unusable_password()  # Do we really want to do this?
+                user.set_unusable_password()
 
                 user.save()
 
             else:
                 membersuite_portal_user.membersuite_id = (
                     authenticated_portal_user.membersuite_id)
-                membersuite_portal_user.save()
 
-        else:
-            # Found a MemberSuitePortalUser. Update cached info.
-            membersuite_portal_user.is_member = self.get_is_member(
-                membersuite_portal_user=authenticated_portal_user)
-            membersuite_portal_user.save()
+        # Update cached is_member.
+        membersuite_portal_user.is_member = self.get_is_member(
+            membersuite_portal_user=authenticated_portal_user)
+
+        membersuite_portal_user.save()
 
         if (getattr(settings, "MAINTENANCE_MODE", None) and
             not membersuite_portal_user.user.is_staff):  # noqa
