@@ -8,7 +8,8 @@ from future.utils import python_2_unicode_compatible
 @python_2_unicode_compatible
 class MemberSuitePortalUser(models.Model):
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     membersuite_id = models.CharField(max_length=64, unique=True)
     is_member = models.BooleanField(default=False)
 

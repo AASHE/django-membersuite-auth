@@ -14,6 +14,8 @@ from .services import MemberSuitePortalUserService
 
 TEST_MS_PORTAL_USER_ID = os.environ["TEST_MS_PORTAL_USER_ID"]
 TEST_MS_PORTAL_USER_PASS = os.environ["TEST_MS_PORTAL_USER_PASS"]
+TEST_MS_PORTAL_FIRST_NAME = os.environ["TEST_MS_PORTAL_FIRST_NAME"]
+TEST_MS_PORTAL_LAST_NAME = os.environ["TEST_MS_PORTAL_LAST_NAME"]
 
 
 class MemberSuitePortalUserServiceTestCase(TestCase):
@@ -54,8 +56,8 @@ class MemberSuiteBackendTestCase(TestCase):
     def test_authenticate_username_password_correct(self):
         user = self.backend.authenticate(username=TEST_MS_PORTAL_USER_ID,
                                          password=TEST_MS_PORTAL_USER_PASS)
-        self.assertEqual("Test", user.first_name)
-        self.assertEqual("User", user.last_name)
+        self.assertEqual(TEST_MS_PORTAL_FIRST_NAME, user.first_name)
+        self.assertEqual(TEST_MS_PORTAL_LAST_NAME, user.last_name)
 
     def test_authenticate_bad_username(self):
         self.assertIsNone(
@@ -77,8 +79,8 @@ class MemberSuiteBackendTestCase(TestCase):
         user = self.backend.authenticate(
             username=TEST_MS_PORTAL_USER_ID,
             password=TEST_MS_PORTAL_USER_PASS)
-        self.assertEqual("Test", user.first_name)
-        self.assertEqual("User", user.last_name)
+        self.assertEqual(TEST_MS_PORTAL_FIRST_NAME, user.first_name)
+        self.assertEqual(TEST_MS_PORTAL_LAST_NAME, user.last_name)
 
     def test_authenticate_creates_membersuite_portal_user(self):
         """Is a MemberSuitePortalUser created when it should be?

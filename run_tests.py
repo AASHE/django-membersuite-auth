@@ -24,12 +24,9 @@ def main():
         os.path.join(BASE_PATH, global_settings.STATIC_URL.strip('/')))
 
     global_settings.INSTALLED_APPS = (
-        'django.contrib.admin',
         'django.contrib.auth',
         'django.contrib.contenttypes',
         'django.contrib.sessions',
-        'django.contrib.messages',
-        'django.contrib.staticfiles',
         'django.contrib.sites',
         'django_membersuite_auth'
     )
