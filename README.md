@@ -44,3 +44,10 @@ Update your Authentication Backends:
     - `MS_ACCESS_KEY`
     - `MS_SECRET_KEY`
     - `MS_ASSOCIATION_ID`
+
+### Test environment variables
+
+    - `TEST_MS_PORTAL_USER_ID`
+    - `TEST_MS_PORTAL_USER_PASS`
+    - `TEST_MS_PORTAL_USER_FIRST_NAME`
+    - `TEST_MS_PORTAL_USER_LAST_NAME`
