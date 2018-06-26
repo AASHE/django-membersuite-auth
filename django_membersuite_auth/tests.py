@@ -12,10 +12,10 @@ from .models import MemberSuitePortalUser
 from .services import MemberSuitePortalUserService
 
 
-TEST_MS_PORTAL_USER_ID = os.environ["TEST_MS_PORTAL_USER_ID"]
-TEST_MS_PORTAL_USER_PASS = os.environ["TEST_MS_PORTAL_USER_PASS"]
-TEST_MS_PORTAL_FIRST_NAME = os.environ["TEST_MS_PORTAL_FIRST_NAME"]
-TEST_MS_PORTAL_LAST_NAME = os.environ["TEST_MS_PORTAL_LAST_NAME"]
+TEST_USER_ID = os.environ["TEST_MS_PORTAL_USER_ID"]
+TEST_USER_PASS = os.environ["TEST_MS_PORTAL_USER_PASS"]
+TEST_USER_FIRST_NAME = os.environ["TEST_MS_PORTAL_USER_FIRST_NAME"]
+TEST_USER_LAST_NAME = os.environ["TEST_MS_PORTAL_USER_LAST_NAME"]
 
 
 class MemberSuitePortalUserServiceTestCase(TestCase):
@@ -32,8 +32,8 @@ class MemberSuitePortalUserServiceTestCase(TestCase):
     def test_login(self):
         """Can we login?"""
         membersuite_portal_user = self.user_service.login(
-            username=TEST_MS_PORTAL_USER_ID,
-            password=TEST_MS_PORTAL_USER_PASS)
+            username=TEST_USER_ID,
+            password=TEST_USER_PASS)
         self.assertTrue(membersuite_portal_user.session_id)
 
     def test_login_failure(self):
@@ -54,21 +54,21 @@ class MemberSuiteBackendTestCase(TestCase):
         self.backend = MemberSuiteBackend()
 
     def test_authenticate_username_password_correct(self):
-        user = self.backend.authenticate(username=TEST_MS_PORTAL_USER_ID,
-                                         password=TEST_MS_PORTAL_USER_PASS)
-        self.assertEqual(TEST_MS_PORTAL_FIRST_NAME, user.first_name)
-        self.assertEqual(TEST_MS_PORTAL_LAST_NAME, user.last_name)
+        user = self.backend.authenticate(username=TEST_USER_ID,
+                                         password=TEST_USER_PASS)
+        self.assertEqual(TEST_USER_FIRST_NAME, user.first_name)
+        self.assertEqual(TEST_USER_LAST_NAME, user.last_name)
 
     def test_authenticate_bad_username(self):
         self.assertIsNone(
             self.backend.authenticate(
                 username="bo-o-o-gus user ID",
-                password=TEST_MS_PORTAL_USER_PASS))
+                password=TEST_USER_PASS))
 
     def test_authenticate_bad_password(self):
         self.assertIsNone(
             self.backend.authenticate(
-                username=TEST_MS_PORTAL_USER_ID,
+                username=TEST_USER_ID,
                 password="wrong password"))
 
     def test_authenticate_creates_user(self):
@@ -77,10 +77,10 @@ class MemberSuiteBackendTestCase(TestCase):
         """
         self.assertEqual(0, User.objects.count())
         user = self.backend.authenticate(
-            username=TEST_MS_PORTAL_USER_ID,
-            password=TEST_MS_PORTAL_USER_PASS)
-        self.assertEqual(TEST_MS_PORTAL_FIRST_NAME, user.first_name)
-        self.assertEqual(TEST_MS_PORTAL_LAST_NAME, user.last_name)
+            username=TEST_USER_ID,
+            password=TEST_USER_PASS)
+        self.assertEqual(TEST_USER_FIRST_NAME, user.first_name)
+        self.assertEqual(TEST_USER_LAST_NAME, user.last_name)
 
     def test_authenticate_creates_membersuite_portal_user(self):
         """Is a MemberSuitePortalUser created when it should be?
@@ -93,8 +93,8 @@ class MemberSuiteBackendTestCase(TestCase):
         self.assertEqual(0, MemberSuitePortalUser.objects.count())
 
         user = self.backend.authenticate(
-            username=TEST_MS_PORTAL_USER_ID,
-            password=TEST_MS_PORTAL_USER_PASS)
+            username=TEST_USER_ID,
+            password=TEST_USER_PASS)
         self.assertIsNotNone(user)
         membersuite_portal_user = MemberSuitePortalUser.objects.get(user=user)
         self.assertNotEqual("", membersuite_portal_user.membersuite_id)
@@ -107,8 +107,8 @@ class MemberSuiteBackendTestCase(TestCase):
           * self.user_service.login() succeeds
         """
         membersuite_portal_user = self.user_service.login(
-            username=TEST_MS_PORTAL_USER_ID,
-            password=TEST_MS_PORTAL_USER_PASS)
+            username=TEST_USER_ID,
+            password=TEST_USER_PASS)
         self.backend.connect()
         is_member = self.backend.get_is_member(
             membersuite_portal_user=membersuite_portal_user)
