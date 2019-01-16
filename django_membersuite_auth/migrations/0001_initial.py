@@ -3,9 +3,10 @@
 import django
 from django.conf import settings
 from django.db import models
+from distutils.version import StrictVersion
 
 
-if django.get_version() == "1.4.3":
+if (StrictVersion(django.get_version()) < StrictVersion('1.7')):
     from south.db import db
     from south.v2 import SchemaMigration
 
@@ -15,11 +16,15 @@ if django.get_version() == "1.4.3":
             # Adding model 'MemberSuitePortalUser'
             db.create_table('django_membersuite_auth_membersuiteportaluser', (
                 ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-                ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-                ('membersuite_id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=64)),
-                ('is_member', self.gf('django.db.models.fields.BooleanField')(default=False)),
+                ('user', self.gf('django.db.models.fields.related.OneToOneField')(
+                    to=orm['auth.User'], unique=True)),
+                ('membersuite_id', self.gf('django.db.models.fields.CharField')(
+                    unique=True, max_length=64)),
+                ('is_member', self.gf(
+                    'django.db.models.fields.BooleanField')(default=False)),
             ))
-            db.send_create_signal('django_membersuite_auth', ['MemberSuitePortalUser'])
+            db.send_create_signal('django_membersuite_auth', [
+                                  'MemberSuitePortalUser'])
 
         def backwards(self, orm):
             # Deleting model 'MemberSuitePortalUser'
