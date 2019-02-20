@@ -116,4 +116,4 @@ class MemberSuiteBackend(object):
         individual = membersuite_portal_user.get_individual(client=client)
         is_member = individual.is_member(client=client)
 
-        return is_member
+        return is_member if is_member else False
