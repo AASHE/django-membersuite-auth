@@ -1,2 +1,2 @@
 future==0.16.0
-membersuite-api-client==1.1.4
+membersuite-api-client==1.1.5
