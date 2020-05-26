@@ -1,2 +1,2 @@
 future
-membersuite-api-client==1.1.5
+-e git+https://github.com/AASHE/python-membersuite-api-client/tree/is-member-fix#egg=membersuite-api-client
