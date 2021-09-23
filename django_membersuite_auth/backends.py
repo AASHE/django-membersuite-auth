@@ -3,14 +3,16 @@ from django.contrib.auth.models import User
 from membersuite_api_client.client import ConciergeClient
 from membersuite_api_client.security.services import (
     LoginToPortalError,
-    get_user_for_membersuite_entity)
+    get_user_for_membersuite_entity,
+)
 
 from .models import MemberSuitePortalUser
 from .services import MemberSuitePortalUserService
 
+from django.db import connection
+
 
 class MemberSuiteBackend(object):
-
     def authenticate(self, username=None, password=None):
         """Returns the appropriate django.contrib.auth.models.User if
         successful; otherwise returns None.
@@ -36,15 +38,16 @@ class MemberSuiteBackend(object):
             self.connect()
             user_service = self.get_user_service()
             authenticated_portal_user = user_service.login(
-                username=username,
-                password=password)
+                username=username, password=password
+            )
         except LoginToPortalError:
             return None
 
         # Match on MembersuitePortalUser ID?
         try:
             membersuite_portal_user = MemberSuitePortalUser.objects.get(
-                membersuite_id=authenticated_portal_user.membersuite_id)
+                membersuite_id=authenticated_portal_user.membersuite_id
+            )
 
         except MemberSuitePortalUser.DoesNotExist:
 
@@ -52,18 +55,18 @@ class MemberSuiteBackend(object):
                 return None
 
             user, user_created = get_user_for_membersuite_entity(
-                membersuite_entity=authenticated_portal_user)
+                membersuite_entity=authenticated_portal_user
+            )
 
             # Match on user?
             try:
-                membersuite_portal_user = MemberSuitePortalUser.objects.get(
-                    user=user)
+                membersuite_portal_user = MemberSuitePortalUser.objects.get(user=user)
 
             except MemberSuitePortalUser.DoesNotExist:
 
                 membersuite_portal_user = MemberSuitePortalUser(
-                    user=user,
-                    membersuite_id=authenticated_portal_user.membersuite_id)
+                    user=user, membersuite_id=authenticated_portal_user.membersuite_id
+                )
 
                 if not user_created:
                     # Update User attributes in case they changed
@@ -78,16 +81,24 @@ class MemberSuiteBackend(object):
 
             else:
                 membersuite_portal_user.membersuite_id = (
-                    authenticated_portal_user.membersuite_id)
+                    authenticated_portal_user.membersuite_id
+                )
 
         # Update cached is_member.
         membersuite_portal_user.is_member = self.get_is_member(
-            membersuite_portal_user=authenticated_portal_user)
+            membersuite_portal_user=authenticated_portal_user
+        )
+
+        membersuite_portal_user.org_receives_member_benefits = (
+            self.org_receives_member_benefits
+        )
 
         membersuite_portal_user.save()
 
-        if (getattr(settings, "MAINTENANCE_MODE", None) and
-            not membersuite_portal_user.user.is_staff):  # noqa
+        if (
+            getattr(settings, "MAINTENANCE_MODE", None)
+            and not membersuite_portal_user.user.is_staff
+        ):  # noqa
 
             return None
 
@@ -97,7 +108,8 @@ class MemberSuiteBackend(object):
         self.client = ConciergeClient(
             access_key=settings.MS_ACCESS_KEY,
             secret_key=settings.MS_SECRET_KEY,
-            association_id=settings.MS_ASSOCIATION_ID)
+            association_id=settings.MS_ASSOCIATION_ID,
+        )
 
     def get_user_service(self):
         user_service = MemberSuitePortalUserService(client=self.client)
@@ -109,11 +121,28 @@ class MemberSuiteBackend(object):
         except User.DoesNotExist:
             return None
 
+    def get_receives_member_benefits(self, membersuite_id):
+
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT receives_membership_benefits FROM iss_organization join iss_membership on owner_id = account_num  where membersuite_id = %s",
+                [membersuite_id],
+            )
+            receives_member_benefits = cursor.fetchone()
+
+        return receives_member_benefits[0]
+
     def get_is_member(self, membersuite_portal_user, client=None):
 
         client = client if client else self.client
 
         individual = membersuite_portal_user.get_individual(client=client)
+        organization = individual.get_primary_organization(client=client)
+
+        self.org_receives_member_benefits = self.get_receives_member_benefits(
+            organization.membersuite_id
+        )
+
         is_member = individual.is_member(client=client)
 
         return is_member
