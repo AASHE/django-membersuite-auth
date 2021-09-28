@@ -121,16 +121,24 @@ class MemberSuiteBackend(object):
         except User.DoesNotExist:
             return None
 
-    def get_receives_member_benefits(self, membersuite_id):
+    def get_receives_member_benefits(self, org_membersuite_id):
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT receives_membership_benefits FROM iss_organization join iss_membership on owner_id = account_num  where membersuite_id = %s",
+                    [org_membersuite_id],
+                )
+                receives_member_benefits = cursor.fetchone()
 
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT receives_membership_benefits FROM iss_organization join iss_membership on owner_id = account_num  where membersuite_id = %s",
-                [membersuite_id],
+            receives_member_benefits = (
+                receives_member_benefits[0]
+                if receives_member_benefits[0] != None
+                else False
             )
-            receives_member_benefits = cursor.fetchone()
 
-        return receives_member_benefits[0]
+            return receives_member_benefits
+        except:
+            return False
 
     def get_is_member(self, membersuite_portal_user, client=None):
 
@@ -138,7 +146,6 @@ class MemberSuiteBackend(object):
 
         individual = membersuite_portal_user.get_individual(client=client)
         organization = individual.get_primary_organization(client=client)
-
         self.org_receives_member_benefits = self.get_receives_member_benefits(
             organization.membersuite_id
         )
