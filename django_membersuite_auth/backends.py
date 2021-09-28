@@ -146,10 +146,16 @@ class MemberSuiteBackend(object):
 
         individual = membersuite_portal_user.get_individual(client=client)
         organization = individual.get_primary_organization(client=client)
-        self.org_receives_member_benefits = self.get_receives_member_benefits(
-            organization.membersuite_id
+        self.org_receives_member_benefits = (
+            self.get_receives_member_benefits(organization.membersuite_id)
+            if organization != None
+            else False
         )
 
-        is_member = individual.is_member(client=client)
+        is_member = (
+            individual.is_member(client=client)
+            if individual.is_member(client=client) != None
+            else False
+        )
 
         return is_member
