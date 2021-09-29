@@ -93,6 +93,8 @@ class MemberSuiteBackend(object):
             self.org_receives_member_benefits
         )
 
+        if membersuite_portal_user.is_member == Null:
+            membersuite_portal_user.is_member = False
         membersuite_portal_user.save()
 
         if (
