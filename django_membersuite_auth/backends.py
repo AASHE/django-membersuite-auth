@@ -122,23 +122,30 @@ class MemberSuiteBackend(object):
             return None
 
     def get_receives_member_benefits(self, org_membersuite_id):
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "SELECT receives_membership_benefits FROM iss_organization join iss_membership on owner_id = account_num  where membersuite_id = %s",
-                    [org_membersuite_id],
-                )
-                receives_member_benefits = cursor.fetchone()
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT receives_membership_benefits FROM iss_organization join iss_membership on owner_id = account_num  where membersuite_id = %s",
+                [org_membersuite_id],
+            )
+            receives_member_benefits = cursor.fetchone()
 
-            receives_member_benefits = (
-                receives_member_benefits[0]
-                if receives_member_benefits[0] != None
-                else False
+        receives_member_benefits = (
+            receives_member_benefits[0] if receives_member_benefits != None else False
+        )
+
+        if receives_member_benefits != None:
+            print("ORG receives member benefits? %s" % receives_member_benefits)
+        else:
+            print(
+                "ORG receives member benefits? NO MEMBERSHIP INFO HERE for %s"
+                % org_membersuite_id
             )
 
-            return receives_member_benefits
-        except:
-            return False
+        return receives_member_benefits
+        # print(
+        #     "ORG receives member benefits? QUERY FOR %s FAILED" % org_membersuite_id
+        # )
+        # return False
 
     def get_is_member(self, membersuite_portal_user, client=None):
 
@@ -151,6 +158,11 @@ class MemberSuiteBackend(object):
             if organization != None
             else False
         )
+
+        if organization != None:
+            print("ORG EXISTS? %s" % organization.membersuite_id)
+        else:
+            print("ORG EXISTS? NO ORG for this account")
 
         is_member = (
             individual.is_member(client=client)
