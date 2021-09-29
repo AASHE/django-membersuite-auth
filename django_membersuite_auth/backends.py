@@ -61,6 +61,7 @@ class MemberSuiteBackend(object):
             # Match on user?
             try:
                 membersuite_portal_user = MemberSuitePortalUser.objects.get(user=user)
+                membersuite_portal_user.is_member = False
 
             except MemberSuitePortalUser.DoesNotExist:
 
@@ -95,6 +96,7 @@ class MemberSuiteBackend(object):
 
         if membersuite_portal_user.is_member == Null:
             membersuite_portal_user.is_member = False
+
         membersuite_portal_user.save()
 
         if (
