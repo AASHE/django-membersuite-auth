@@ -7,7 +7,7 @@ from membersuite_api_client.security.services import (
 )
 
 from .models import MemberSuitePortalUser
-from .services import MemberSuitePortalUserService
+from .services import MemberSuitePortalUserService, MemberSuiteMembershipService
 
 from django.db import connection
 
@@ -127,40 +127,15 @@ class MemberSuiteBackend(object):
         except User.DoesNotExist:
             return None
 
-    def get_receives_member_benefits(self, org_membersuite_id):
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT receives_membership_benefits FROM iss_organization join iss_membership on owner_id = account_num  where membersuite_id = %s",
-                [org_membersuite_id],
-            )
-            receives_member_benefits = cursor.fetchone()
-
-        receives_member_benefits = (
-            receives_member_benefits[0] if receives_member_benefits != None else False
-        )
-
-        if receives_member_benefits != None:
-            print("ORG receives member benefits? %s" % receives_member_benefits)
-        else:
-            print(
-                "ORG receives member benefits? NO MEMBERSHIP INFO HERE for %s"
-                % org_membersuite_id
-            )
-
-        return receives_member_benefits
-        # print(
-        #     "ORG receives member benefits? QUERY FOR %s FAILED" % org_membersuite_id
-        # )
-        # return False
-
     def get_is_member(self, membersuite_portal_user, client=None):
 
         client = client if client else self.client
+        mem_service = MemberSuiteMembershipService(client=client)
 
         individual = membersuite_portal_user.get_individual(client=client)
         organization = individual.get_primary_organization(client=client)
         self.org_receives_member_benefits = (
-            self.get_receives_member_benefits(organization.membersuite_id)
+            mem_service.get_receives_member_benefits(organization.account_num)
             if organization != None
             else False
         )
