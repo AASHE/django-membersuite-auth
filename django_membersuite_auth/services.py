@@ -37,10 +37,12 @@ class MemberSuiteMembershipService(object):
     def get_receives_member_benefits(self, account_num):
         """Fetch the current membership for the given account number and return whether receives member benefits."""
 
-        current_membership = self.mem_service.get_current_membership_for_org(account_num=account_num)
+        # get the last membership for this account
+        all_memberships = self.mem_service.get_memberships_for_org(account_num=account_num)
+        last_membership = all_memberships[-1] if all_memberships else None
 
         receives_member_benefits = (
-            current_membership.receives_member_benefits if current_membership else False
+            last_membership.receives_member_benefits if last_membership else False
         )
 
         if receives_member_benefits != None:
