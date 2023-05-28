@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.auth.backends import BaseBackend
 from membersuite_api_client.client import ConciergeClient
 from membersuite_api_client.security.services import (
     LoginToPortalError,
@@ -12,8 +13,8 @@ from .services import MemberSuitePortalUserService, MemberSuiteMembershipService
 from django.db import connection
 
 
-class MemberSuiteBackend(object):
-    def authenticate(self, username=None, password=None):
+class MemberSuiteBackend(BaseBackend):
+    def authenticate(self, request, username=None, password=None):
         """Returns the appropriate django.contrib.auth.models.User if
         successful; otherwise returns None.
 
