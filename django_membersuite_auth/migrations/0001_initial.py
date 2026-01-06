@@ -3,10 +3,9 @@
 import django
 from django.conf import settings
 from django.db import models
-from distutils.version import StrictVersion
+from packaging.version import parse
 
-
-if (StrictVersion(django.get_version()) < StrictVersion('1.7')):
+if (parse(django.get_version()) < parse('1.7')):
     from south.db import db
     from south.v2 import SchemaMigration
 
